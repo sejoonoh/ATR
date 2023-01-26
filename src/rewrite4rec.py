@@ -355,8 +355,8 @@ def main():
             i3.append(i)
     train,val,test = X[i1],X[i2],X[i3]
     ratings = X
-    description = pd.read_csv('data/amazon_description_new.txt',header=None).values.flatten()
-    keywords = pd.read_csv('data/amazon_description_new.key.txt',header=None).values.flatten() 
+    description = pd.read_csv('data/amazon_description.txt',header=None).values.flatten()
+    keywords = pd.read_csv('data/amazon_description.key.txt',header=None).values.flatten() 
     assert args.pregenerated_data.is_dir(), \
         "--pregenerated_data should point to the folder of files made by pregenerate_training_data.py!"
 
@@ -401,15 +401,6 @@ def main():
         for item in preds:
             bleu_ref.append([description[item]])
 
-        if args.mode=='cold_start':
-            description = pd.read_csv('data/amazon_description_new.txt',header=None).values.flatten()
-            keywords = pd.read_csv('data/amazon_description_new.key.txt',header=None).values.flatten() 
-            for item in preds:
-                new_str = ' '.join(description[item].split(' ')[:10])
-                description[item] = new_str
-                keywords[item] = new_str
-        #    np.savetxt('result/amazon/cold_start_HMF_seed'+str(seed)+'.txt',description,fmt='%s')
-
         text_emb_all = sbert.encode(description,convert_to_tensor=True,batch_size=4096).to(device)
 
         with torch.no_grad():
@@ -442,7 +433,6 @@ def main():
         optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon)
         scheduler = WarmupLinearSchedule(optimizer, warmup_steps=args.warmup_steps, t_total=num_train_optimization_steps)
  
-        print('done!')
         avg_rating,avg_HITS,avg_rank,avg_text_sim,avg_len = evaluation(MF_model, preds,negatives,text_emb_all, description,test,device,rating_matrix)
         print('Original performance: (target.rating, target.HITS@20, target.rank, text_similiarity, avg_text_len)= {},{},{},{},{}'.format(avg_rating,avg_HITS,avg_rank,avg_text_sim,avg_len),file=f,flush=True)
         orig[0].append(avg_rating)
@@ -464,8 +454,8 @@ def main():
         target_array = torch.ones((args.train_batch_size,int(0.1*num_user))).to(device)
         loss2 = nn.MarginRankingLoss(margin=0.01)
         pointer,best_text,best_rating,best_model  = [],[],0,0
-        cur_path = 'result/amazon/HMF_'
-        keyword_path = cur_path + 'keywords_final.txt'
+        cur_path = './'
+        keyword_path = cur_path + 'keywords.txt'
         np.savetxt(keyword_path,keywords[preds],fmt='%s')
 
         for epoch in range(args.epochs+1):
@@ -485,15 +475,6 @@ def main():
             tr_loss = 0
             nb_tr_examples, nb_tr_steps = 0, 0
             pointer_loss,promotion_loss=0,0
-
-            if epoch==0:
-                pointer,new_text = inference_now(target_items,model,tokenizer,Path(keyword_path),description,num_item,device,0)
-                avg_rating,avg_HITS,avg_rank,avg_text_sim,avg_len = evaluation(MF_model, preds,negatives,text_emb_all, pointer,test,device,rating_matrix)
-                pointer_res[0].append(avg_rating)
-                pointer_res[1].append(avg_HITS)
-                pointer_res[2].append(avg_rank)
-                pointer_res[3].append(avg_text_sim)
-                pointer_res[4].append(avg_len)
             
             avgs = []
             for step, batch in enumerate(train_dataloader):
@@ -522,9 +503,8 @@ def main():
             logger.info("EVALERR: {}%".format(tr_loss))
        
         
-#        np.savetxt('result/amazon/new_text_seed'+str(seed)+'_HMF.txt',np.array(text_all)[preds],fmt='%s')
-#        np.savetxt('result/amazon/pointer_seed'+str(seed)+'_HMF.txt',np.array(pointer)[preds],fmt='%s')
-#        np.savetxt('result/amazon/original_seed'+str(seed)+'_HMF.txt',description[preds],fmt='%s')
+        np.savetxt('result/amazon/new_text_seed'+str(seed)+'_HMF.txt',np.array(text_all)[preds],fmt='%s')
+        np.savetxt('result/amazon/original_seed'+str(seed)+'_HMF.txt',description[preds],fmt='%s')
 
         cur[0].append(avg_rating)
         cur[1].append(avg_HITS)
@@ -537,39 +517,8 @@ def main():
 
     print('original description result',file=f)
     print(orig,file=f)
-    print('pointer result',file=f)
-    print(pointer_res,file=f)
-    print('attack result',file=f)
+    print('Rewrite4Rec result',file=f)
     print(cur,file=f)
 
 if __name__ == '__main__':
     main()
-
-'''
-        ids,masks,segments,labels,originals = torch.zeros((0,256)).long(),torch.zeros((0,256)).long(),torch.zeros((0,256)).long(),torch.zeros((0,256)).long(),torch.zeros(0).long()
-            for step, batch in enumerate(train_dataloader):
-                input_ids, input_mask, segment_ids, lm_label_ids,original_ids = batch[0],batch[1],batch[2],batch[3],batch[4]
-                target_indices = []
-                for idx in range(original_ids.shape[0]):
-                    if original_ids[idx].item() in target_items:
-                        target_indices.append(idx)
-                ids,masks,segments,labels,originals = torch.cat((ids,input_ids[target_indices])),torch.cat((masks,input_mask[target_indices])),torch.cat((segments,segment_ids[target_indices])),torch.cat((labels,lm_label_ids[target_indices])),torch.cat((originals,original_ids[target_indices]))
-            ids,masks,segments,labels,originals = ids.to(device),masks.to(device),segments.to(device),labels.to(device),originals.to(device)
-
-                        chosen_idx = np.random.choice(np.arange(ids.shape[0]),size=args.train_batch_size)
-                output_promotion = model(ids[chosen_idx], segments[chosen_idx], masks[chosen_idx], labels[chosen_idx],)
-                cur_items = originals[chosen_idx] 
-                prediction = torch.argmax(output_promotion[1],dim=-1)
-                text_emb_cur = model(prediction)[1]
-                chosen_user = np.random.choice(np.arange(num_user),size=int(0.1*num_user))
-                target_pred = torch.zeros((args.train_batch_size,len(chosen_user))).to(device)
-                for idx in range(args.train_batch_size):
-                    target_pred[idx] = MF_model(rating_gpu[chosen_user,:].detach(),rating_gpu[:,cur_items[idx]].t().expand(len(chosen_user),-1).detach(),text_emb_cur[idx].expand(len(chosen_user),-1))
-                maxvv = torch.cat([maxv[chosen_user]]*args.train_batch_size).to(device)
-                cur_output = torch.flatten(target_pred)
-                target_loss = loss2(cur_output,maxvv,ones_array[:cur_output.shape[0]]) 
-
-                promotion_loss += args.coeff*target_loss.item()
-
-
-'''
