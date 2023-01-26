@@ -392,11 +392,10 @@ def main():
         print(num_user,num_item,ratings.shape)
         num_target = int(num_item*args.target_ratio)
      
-        preds = pd.read_csv('result/amazon/target_item_seed'+str(seed)+'.txt',header=None).values.flatten()
-        negatives = pd.read_csv('result/amazon/ranking_item_seed'+str(seed)+'.txt',header=None).values.flatten()
-        negatives = negatives.astype(int)
-        preds = preds.astype(int)
+        preds = sorted(np.random.choice(np.arange(num_item),size=int(0.01*num_item),replace=False)
         target_items = set(preds)
+        negatives = sorted(np.append(np.random.choice([item for item in range(num_item) if item not in target_items],size=int(0.1*num_item),replace=False),preds))
+      
         bleu_ref = []
         for item in preds:
             bleu_ref.append([description[item]])
@@ -503,8 +502,8 @@ def main():
             logger.info("EVALERR: {}%".format(tr_loss))
        
         
-        np.savetxt('result/amazon/new_text_seed'+str(seed)+'_HMF.txt',np.array(text_all)[preds],fmt='%s')
-        np.savetxt('result/amazon/original_seed'+str(seed)+'_HMF.txt',description[preds],fmt='%s')
+        np.savetxt('new_text_seed'+str(seed)+'_HMF.txt',np.array(text_all)[preds],fmt='%s')
+        np.savetxt('original_seed'+str(seed)+'_HMF.txt',description[preds],fmt='%s')
 
         cur[0].append(avg_rating)
         cur[1].append(avg_HITS)
