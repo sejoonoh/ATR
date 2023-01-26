@@ -1,0 +1,12 @@
+python whitebox_HMF.py \
+	--pregenerated_data ./data/amazon_processed_new \
+  --bert_model ckpt/amazon_fine_tuned_10 \
+  --mf_model_path ckpt/amazon_HMF \
+  --output result/amazon/whitebox_HMF_final \
+	--epochs 2 \
+	--train_batch_size 32 \
+	--learning_rate 1e-5\
+  --target_ratio 0.01\
+  --coeff 1.0 \
+  --mode ours \
+	--gpu 0
