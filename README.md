@@ -1,7 +1,7 @@
 # Rewrite4Rec: Text Rewriting for Target Item Promotions in Multi-modal Recommender Systems
 
 This repository contains anonymized code and datasets for Rewrite4Rec paper for KDD 2023.  
-[Link to Dataset](https://drive.google.com/file/d/1AvpAqBQvr0BduHDPVqssM5KIyIO_hHa4/view?usp=sharing)  
+[Link to Dataset](https://github.com/sejoonoh/Rewrite4Rec/blob/main/dataset.zip)  
 The example command of Rewrite4Rec on the Amazon Book dataset and [HybridMF model](https://ieeexplore.ieee.org/document/8852443) is given as follows.
 
  1. Create `data`, `ckpt`, `result` directories.  
