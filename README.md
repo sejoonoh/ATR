@@ -4,11 +4,11 @@ This repository contains anonymized code and datasets for Rewrite4Rec paper for 
 [Link to Dataset](https://drive.google.com/file/d/1AvpAqBQvr0BduHDPVqssM5KIyIO_hHa4/view?usp=sharing)  
 The example command of Rewrite4Rec on the Amazon Book dataset and [HybridMF model](https://ieeexplore.ieee.org/document/8852443) is given as follows.
 
- 1. Download the dataset with the above link and unzip them under `data` directory (create `data` and `ckpt` directory as well).  
+ 1. Download the dataset with the above link and unzip them under `data` directory (create `data`, `ckpt`, `result` directories as well).  
  2. Execute `data_generate.sh` and `keyword_extraction.sh` to generate training data and keywords for **POINTER** model.  
- 3. Execute `fine_tune.sh' for the Phase 1 training of **Rewrite4Rec**.  
- 4. Run `python src/hybridmf.py' to train the recommendation model on the Amazon Book dataset.  
- 5. Execute `rewrite4rec.sh' for the Phase 2 training of **Rewrite4Rec**.  
+ 3. Execute `fine_tune.sh` for the Phase 1 training of **Rewrite4Rec**.  
+ 4. Run `python src/hybridmf.py` to train the recommendation model on the Amazon Book dataset.  
+ 5. Execute `rewrite4rec.sh` for the Phase 2 training of **Rewrite4Rec**.  
  6. Check the ranking performance and rewritten texts created by **Rewrite4Rec**.  
 
 # Abstract 
