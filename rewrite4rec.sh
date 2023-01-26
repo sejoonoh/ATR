@@ -1,8 +1,8 @@
-python whitebox_HMF.py \
-	--pregenerated_data ./data/amazon_processed_new \
+python src/rewrite4rec.py \
+	--pregenerated_data ./data/amazon_processed \
   --bert_model ckpt/amazon_fine_tuned_10 \
   --mf_model_path ckpt/amazon_HMF \
-  --output result/amazon/whitebox_HMF_final \
+  --output rewrite4rec_result \
 	--epochs 2 \
 	--train_batch_size 32 \
 	--learning_rate 1e-5\
