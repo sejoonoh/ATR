@@ -1,7 +1,7 @@
 # Text Rewriting Attacks to Assess the Robustness of Recommender Systems
 
 This repository contains anonymized code and datasets for ATR paper for RecSys 2023.  
-[Link to Dataset](https://github.com/sejoonoh/Rewrite4Rec/blob/main/dataset.zip)  
+Datasets used in the paper are available here [Link to Dataset](https://github.com/sejoonoh/Rewrite4Rec/blob/main/dataset.zip)  
 The example command of ATR on the Amazon Book dataset and [HybridMF model](https://ieeexplore.ieee.org/document/8852443) is given as follows.
 
  1. Create `data`, `ckpt`, `result` directories.  
