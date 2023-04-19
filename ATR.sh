@@ -1,4 +1,4 @@
-python src/rewrite4rec.py \
+python src/ATR.py \
 	--pregenerated_data ./data/amazon_processed \
   --bert_model ckpt/amazon_fine_tuned_10 \
   --mf_model_path ckpt/amazon_HMF \
