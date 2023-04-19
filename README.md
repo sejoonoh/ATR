@@ -12,6 +12,8 @@ The example command of ATR on the Amazon Book dataset and [HybridMF model](https
  6. Execute `ATR.sh` for the Phase 2 training of **ATR**.  
  7. Check the ranking performance and rewritten texts created by **ATR**.  
 
+The code for ATR with the OPT text generation model will be added later.
+
 # Abstract 
 Large language models have demonstrated powerful performance in various language tasks such as text generation or vectorizing given
 text. Using such language models, modern recommender systems have incorporated rich textual features such as titles and descriptions
