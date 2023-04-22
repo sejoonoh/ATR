@@ -1,4 +1,4 @@
-# Text Rewriting Attacks to Assess the Robustness of Recommender Systems
+# Product Description Rewriting Attack on Text-Aware Recommender Systems
 
 This repository contains anonymized code and datasets for ATR paper for RecSys 2023.  
 Datasets used in the paper are available here [Link to Dataset](https://drive.google.com/file/d/1mp8NEOHVYC1q-CESFin4cUuO-0-N2Qkz/view?usp=sharing)  
@@ -15,17 +15,14 @@ The example command of ATR on the Amazon Book dataset and [HybridMF model](https
 The code for ATR with the OPT text generation model will be added later.
 
 # Abstract 
-Large language models have demonstrated powerful performance in various language tasks such as text generation or vectorizing given
-text. Using such language models, modern recommender systems have incorporated rich textual features such as titles and descriptions
-into their model training and predictions. While product descriptions have been employed as key input features to text-aware
-recommenders, the robustness of existing recommenders against manipulating product descriptions has not been investigated yet. If
-attackers can easily promote the visibility of their target items via description rewriting, the credibility of an online platform (e.g.,
-e-commerce) can be critically damaged. Even worse, the rewriting attack is hard to detect since item descriptions can be frequently
-updated by the item owner. In this paper, we propose an adversarial text rewriting framework: ATR which creates ranking-optimized
-descriptions of target items to promote their ranking across all users. ATR is trained in a 2-phase manner, where in the first phase, we
-learn the dataset-specific context, and in the second phase, we perform adversarial fine-tuning for promoting target items’ ranks while
-preserving the semantic meaning of their descriptions. Extensive experiments show that existing recommenders show vulnerability
-against the proposed text rewriting attack. Notably, ATR can generate ranking-optimized descriptions of target items even under the
-black-box setup (i.e., no access to the recommender and training data). Human evaluation aimed to discern the quality of rewritten
-descriptions demonstrates superior performance of ATR over a competitive text generation baseline.
-
+Text-aware recommender systems incorporate rich textual features, such as titles and descriptions, to generate item recommendations
+for users. The use of textual features helps mitigate cold-start problems and thus, such recommender systems have attracted increased
+attention. However, we argue that the dependency on item descriptions makes the recommender system vulnerable to manipulation
+by adversarial sellers. In this paper, we explore the possibility of such manipulation by proposing the first text rewriting framework to
+attack text-aware recommender systems. Specifically, ATR creates ranking-optimized descriptions of target items to promote their
+ranking across all users. ATR works in two phases – in the first phase, the text generation model is optimized to learn the textual
+properties across the dataset, inducing domain adaptation to the target descriptions. In the second phase, the model adversarially
+rewrites the target items’ descriptions to increase the items’ predicted ratings across all users while preserving fluency and semantic
+meaning. Experiments demonstrate that three existing recommender systems exhibit vulnerability against the proposed text rewriting
+attack in MovieLens and two Amazon datasets. Human evaluation aimed to discern the quality of descriptions demonstrates superior
+quality of ATR-written descriptions over a GPT-2 baseline. Our work highlights the need to create robust recommender systems.
