@@ -1,6 +1,6 @@
 # Product Description Rewriting Attack on Text-Aware Recommender Systems
 
-This repository contains anonymized code and datasets for ATR paper for RecSys 2023.  
+This repository contains anonymized code and datasets for ATR paper.  
 Datasets used in the paper are available here [Link to Dataset](https://drive.google.com/file/d/1mp8NEOHVYC1q-CESFin4cUuO-0-N2Qkz/view?usp=sharing)  
 The example command of ATR on the Amazon Book dataset and [HybridMF model](https://ieeexplore.ieee.org/document/8852443) is given as follows.
 
