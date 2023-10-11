@@ -2,17 +2,25 @@
 
 This repository contains anonymized code and datasets for ATR paper.  
 Datasets used in the paper are available here [Link to Dataset](https://drive.google.com/file/d/1mp8NEOHVYC1q-CESFin4cUuO-0-N2Qkz/view?usp=sharing)  
-The example command of ATR on the Amazon Book dataset and [HybridMF model](https://ieeexplore.ieee.org/document/8852443) is given as follows.
+The example command of ATR-2FT+OPT-350M on the Amazon Book dataset and [UniSRec model](https://github.com/RUCAIBox/UniSRec) is given as follows.
 
- 1. Create `data`, `ckpt`, `result` directories.  
- 2. Download the dataset with the above link and unzip them under `data` directory. Put the pre-trained BERT model (e.g., `all-MiniLM-L6-v2`) into `ckpt` directory.
- 3. Execute `data_generate.sh` and `keyword_extraction.sh` to generate training data and keywords for **POINTER** model.  
- 4. Execute `fine_tune.sh` for the Phase 1 training of **ATR**.  
- 5. Run `python src/hybridmf.py` to train the recommendation model on the Amazon Book dataset.  
- 6. Execute `ATR.sh` for the Phase 2 training of **ATR**.  
- 7. Check the ranking performance and rewritten texts created by **ATR**.  
+ 1. Download the dataset with the above link and unzip them under `src/dataset/downstream/amazon_book` directory.
+ 2. Execute `python src/opt_fine_tune.py` to perform Phase-1 fine-tuning on Amazon book dataset. It will create the fine-tuned model `opt-350m`.
+ 3. Run `python src/pretrain.py -d amazon_book` to train the recommendation model on the Amazon Book dataset. It will save a trained recommender under `src/saved` directory.
+ 4. In `ATR-2FT.sh', find -p argument. Replace the path with the exact path of a trained recommender obtained in the above step. 
+ 5. Execute `ATR-2FT.sh` for the Phase-2 fine-tuning.  
+ 6. Check the ranking performance and rewritten texts created by **ATR-2FT** in the `result/amazon/2FT` directory.  
 
-The code for ATR with the OPT text generation model will be added later.
+
+The example command of ATR-ICL+LLama-2-Chat-7B on the Amazon Book dataset and [UniSRec model](https://github.com/RUCAIBox/UniSRec) is given as follows.
+
+ 1. Download the dataset with the above link and unzip them under `src/dataset/downstream/amazon_book` directory.
+ 2. Download the [LLama-2 model](https://github.com/facebookresearch/llama) and put them under `src` directory.
+ 3. Run `python src/pretrain.py -d amazon_book` to train the recommendation model on the Amazon Book dataset. It will save a trained recommender under `src/saved` directory.
+ 4. In `ATR-ICL.sh', find -p argument. Replace the path with the exact path of a trained recommender obtained in the above step. 
+ 5. Execute `ATR-ICL.sh` for the in-context learning.   
+ 6. Check the ranking performance and rewritten texts created by **ATR-ICL** in the `result/amazon/ICL/` directory.  
+
 
 # Abstract 
 Text-aware recommender systems incorporate rich textual features, such as titles and descriptions, to generate item recommendations
