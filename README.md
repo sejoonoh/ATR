@@ -4,7 +4,7 @@ This repository contains anonymized code and datasets for ATR paper.
 Datasets used in the paper are available here [Link to Dataset](https://drive.google.com/file/d/1mp8NEOHVYC1q-CESFin4cUuO-0-N2Qkz/view?usp=sharing)  
 The example command of **ATR-2FT+OPT-350M** on the Amazon Book dataset and [UniSRec model](https://github.com/RUCAIBox/UniSRec) is given as follows.
 
- 1. Download the dataset with the above link and unzip them under `src/dataset/downstream/amazon_book` directory.
+ 1. Download the [preprocessed Amazon Book dataset for UniSRec model](https://drive.google.com/file/d/1_k10CKv0VsRON3L_PcTBhoQ09EOer70q/view?usp=drive_link)  and unzip them under `src/dataset/downstream/` directory.
  2. Execute `python src/opt_fine_tune.py` to perform Phase-1 fine-tuning on Amazon book dataset. It will create the fine-tuned model `opt-350m`.
  3. Run `python src/pretrain.py -d amazon_book` to train the recommendation model on the Amazon Book dataset. It will save a trained recommender under `src/saved` directory.
  4. In `ATR-2FT.sh`, find -p argument. Replace the path with the exact path of a trained recommender obtained in the above step. 
@@ -14,7 +14,7 @@ The example command of **ATR-2FT+OPT-350M** on the Amazon Book dataset and [UniS
 
 The example command of **ATR-ICL+LLama-2-Chat-7B** on the Amazon Book dataset and [UniSRec model](https://github.com/RUCAIBox/UniSRec) is given as follows.
 
- 1. Download the dataset with the above link and unzip them under `src/dataset/downstream/amazon_book` directory.
+ 1. Download the [preprocessed Amazon Book dataset for UniSRec model](https://drive.google.com/file/d/1_k10CKv0VsRON3L_PcTBhoQ09EOer70q/view?usp=drive_link) and unzip them under `src/dataset/downstream/` directory.
  2. Download the [LLama-2 model](https://github.com/facebookresearch/llama) and put them under `src` directory.
  3. Run `python src/pretrain.py -d amazon_book` to train the recommendation model on the Amazon Book dataset. It will save a trained recommender under `src/saved` directory.
  4. In `ATR-ICL.sh`, find -p argument. Replace the path with the exact path of a trained recommender obtained in the above step. 
