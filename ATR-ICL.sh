@@ -1,1 +1,1 @@
-python -m torch.distributed.run --rdzv-backend=c10d --rdzv-endpoint=localhost:0 --nproc_per_node 1 src/ATR-ICL.py -d amazon_book -p src/saved/UniSRec-Jun-27-2023_02-29-15.pth --num_example 10 --output result/amazon/ICL/ranking --gpu 1
+python -m torch.distributed.run --rdzv-backend=c10d --rdzv-endpoint=localhost:0 --nproc_per_node 1 src/ATR-ICL.py -d amazon_book -p src/saved/UniSRec_Fine_Tuned_on_Amazon_Book.pth --num_example 10 --output result/amazon/ICL/ranking --gpu 1
