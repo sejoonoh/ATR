@@ -30,7 +30,7 @@ The example command of ATR-ICL+LLama-2-Chat-7B on the Amazon Book dataset and [U
  5. Execute `ATR-ICL.sh` for the in-context learning.   
  6. Check the ranking performance and rewritten texts created by **ATR-ICL** in the `result/amazon/ICL/` directory.  
 
-For other recommenders and datasets, you will need to adjust the ATR code to preprocess dataset, pre-train the recommender with the dataset, and .
+**For other recommenders and datasets, you will need to preprocess dataset, pre-train the recommender with the dataset, and adjust existing ATR code to the recommender and dataset.**
 
 # Abstract 
 Text-aware recommender systems incorporate rich textual features, such as titles and descriptions, to generate item recommendations for users. The use of textual features helps mitigate cold-start problems, and thus, such recommender systems have attracted increased attention. However, we argue that the dependency on item descriptions makes the recommender system vulnerable to manipulation by adversarial sellers on e-commerce platforms. In this paper, we explore the possibility of such manipulation by proposing a new
