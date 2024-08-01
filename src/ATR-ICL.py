@@ -1,3 +1,10 @@
+#@contact    Sejoon Oh (soh337@gatech.edu), Georgia Institute of Technology
+#@version    1.0
+#@date       2024-07-31
+#Adversarial Text Rewriting for Text-aware Recommender Systems
+#This software is free of charge under research purposes.
+#For commercial purposes, please contact the main author.
+
 import argparse
 from logging import getLogger
 import torch
