@@ -24,7 +24,7 @@ The example command of ATR-2FT+OPT-350M on the Amazon Book dataset and [UniSRec 
 The example command of ATR-ICL+LLama-2-Chat-7B on the Amazon Book dataset and [UniSRec model](https://github.com/RUCAIBox/UniSRec) is given as follows.
 
  1. Download [processed Amazon Book dataset](https://drive.google.com/file/d/1_k10CKv0VsRON3L_PcTBhoQ09EOer70q/view?usp=drive_link) and unzip them under `src/dataset/downstream/amazon_book` directory.
- 2. Download the [LLama-2 model](https://github.com/facebookresearch/llama) and put them under `src` directory. **Don't forget to build the Llama model from source.**
+ 2. Download the [LLama-2 model](https://github.com/facebookresearch/llama) and put them under current directory. **Don't forget to build the Llama model from source.**
  3. Download a pre-trained text-aware recommender model [UniSRec-Fined-Tuned-on-Amazon-Book.pth](https://drive.google.com/file/d/1d7fLYgs0ZTAdCwK6wpszWTIm7QciuB3U/view?usp=drive_link) and save the model under `src/saved` directory.
  4. In `ATR-ICL.sh', find -p argument. Replace the path with the exact path of a trained recommender obtained in the above step. 
  5. Execute `ATR-ICL.sh` for the in-context learning.   
