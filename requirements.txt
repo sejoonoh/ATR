@@ -1,0 +1,9 @@
+datasets==2.20.0
+evaluate==0.4.2
+numpy==1.26.4
+pandas==2.2.2
+recbole==1.2.0
+sentence_transformers==3.0.1
+torch==2.3.1
+tqdm==4.66.4
+transformers==4.42.4

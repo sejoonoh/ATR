@@ -183,15 +183,15 @@ def main():
     bleu = evaluate.load("bleu")
     meteor = evaluate.load('meteor')
     sbert = SentenceTransformer('all-MiniLM-L6-v2',device=device)
-    X = pd.read_csv('dataset/downstream/amazon_book/amazon_rating.tsv',header=None,sep='\t').values   
+    X = pd.read_csv('src/dataset/downstream/amazon_book/amazon_rating.tsv',header=None,sep='\t').values   
     users_all,items_all = np.unique(X[:,0]),np.unique(X[:,1])
     user_map,item_map = {user:idx for (idx,user) in enumerate(users_all)},{item:idx for (idx,item) in enumerate(items_all)}
     ratings = X
-    description = pd.read_csv('dataset/downstream/amazon_book/amazon_description_new.txt',header=None).values.flatten()
+    description = pd.read_csv('src/dataset/downstream/amazon_book/amazon_description_new.txt',header=None).values.flatten()
     print(description[0])
 
     f = open(args.output,'w')
-    train_dataset = load_dataset("text",data_files="dataset/downstream/amazon_book/amazon_description_new.txt")
+    train_dataset = load_dataset("text",data_files="src/dataset/downstream/amazon_book/amazon_description_new.txt")
     column_names = train_dataset["train"].column_names
     text_column_name = "text" if "text" in column_names else column_names[0]
 
@@ -232,7 +232,7 @@ def main():
  
     num_data_epochs = args.epochs
     orig,cur,pointer_res = [[],[],[],[],[]],[[],[],[],[],[],[],[]],[[],[],[],[],[]]
-    props = ['props/UniSRec.yaml', 'props/finetune.yaml']
+    props = ['src/props/UniSRec.yaml', 'src/props/finetune.yaml']
 
     # configurations initialization
     config = Config(model=UniSRec, dataset='amazon_book', config_file_list=props)
@@ -246,7 +246,7 @@ def main():
     # model loading and initialization
     MF_model = UniSRec(config, train_data.dataset).to(device)
 
-    latest = dataset._load_feat('dataset/downstream/amazon_book/amazon_book.latest.inter',  FeatureSource.INTERACTION)
+    latest = dataset._load_feat('src/dataset/downstream/amazon_book/amazon_book.latest.inter',  FeatureSource.INTERACTION)
     latest_dict = {}
     for column in latest.columns:
         if column=='user_id' or column=='item_id':
@@ -260,7 +260,7 @@ def main():
 
     latest_interaction = Interaction(latest_dict).to(device)
 
-    test = dataset._load_feat('dataset/downstream/amazon_book/amazon_book.test.inter',  FeatureSource.INTERACTION)
+    test = dataset._load_feat('src/dataset/downstream/amazon_book/amazon_book.test.inter',  FeatureSource.INTERACTION)
     test_dict = {}
     for column in test.columns:
         if column=='user_id' or column=='item_id':
@@ -280,8 +280,8 @@ def main():
         num_user,num_item = len(users_all),len(items_all)
         print(num_user,num_item,ratings.shape)
         model = AutoModelForCausalLM.from_pretrained(args.bert_model).to(device)
-        preds = pd.read_csv('../result/amazon/target_item_seed'+str(seed)+'.txt',header=None).values.flatten()
-        negatives = pd.read_csv('../result/amazon/ranking_item_seed'+str(seed)+'.txt',header=None).values.flatten()
+        preds = pd.read_csv('result/amazon/target_item_seed'+str(seed)+'.txt',header=None).values.flatten()
+        negatives = pd.read_csv('result/amazon/ranking_item_seed'+str(seed)+'.txt',header=None).values.flatten()
         negatives = negatives.astype(int)
         preds = preds.astype(int)
         target_items = set(preds)
@@ -417,7 +417,7 @@ def main():
             print(original_loss,promotion_loss,np.average(avgs),file=f,flush=True)
             print("PROGRESS: {}%".format(round(100 * (epoch + 1) / args.epochs, 4)))
      
-        np.savetxt('../result/amazon/2FT/new_text_seed'+str(seed)+'_unisrec_opt350m.txt',text_all[preds],fmt='%s')
+        np.savetxt('result/amazon/2FT/new_text_seed'+str(seed)+'_unisrec_opt350m.txt',text_all[preds],fmt='%s')
         del text_emb_all
         torch.cuda.empty_cache()            
         cur[0].append(avg_rating)

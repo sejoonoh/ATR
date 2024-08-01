@@ -1,4 +1,4 @@
-data_path: 'dataset/downstream/'
+data_path: 'src/dataset/downstream/'
 benchmark_filename: [train, valid, test]
 alias_of_item_id: [item_id_list]
 load_col:

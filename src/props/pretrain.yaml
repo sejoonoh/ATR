@@ -1,4 +1,4 @@
-data_path: 'dataset/pretrain/'
+data_path: 'src/dataset/downstream/'
 benchmark_filename: [train]
 alias_of_item_id: [item_id_list]
 load_col:
@@ -8,5 +8,6 @@ transform: plm_emb
 
 train_stage: pretrain
 pretrain_epochs: 300
+train_neg_sample_args: ~
 save_step: 50
 train_batch_size: 8192

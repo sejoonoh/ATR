@@ -69,11 +69,9 @@ def evaluation(MF_model,target_items,negatives, orig_emb,cur_text,device,num_use
             intersect,x_ind,y_ind = np.intersect1d(ranks,locations,return_indices=True)
             avg_rank += sum(x_ind+1)  
             avg_rating += sum(predictions[locations])
-            rank_sum+=x_ind+1
-            score_sum+=predictions[locations]
             avg_HITS += len(np.intersect1d(ranks[:20],locations))
 
-avg_rating/=len(target_items)*full_ranking.shape[0]
+        avg_rating/=len(target_items)*full_ranking.shape[0]
         avg_HITS/=full_ranking.shape[0]*20
         avg_rank/=len(target_items)*full_ranking.shape[0]
         cos = nn.CosineSimilarity(dim=1, eps=1e-6)
@@ -95,7 +93,7 @@ def ICL(dataset, pretrained_file, args, fix_enc=True):
     sbert = SentenceTransformer('all-MiniLM-L6-v2',device=device)
     f = open(args.output,'w') 
   
-    props = ['props/UniSRec.yaml', 'props/finetune.yaml']
+    props = ['src/props/UniSRec.yaml', 'src/props/finetune.yaml']
 
     # configurations initialization
     config = Config(model=UniSRec, dataset=dataset, config_file_list=props)
@@ -116,7 +114,7 @@ def ICL(dataset, pretrained_file, args, fix_enc=True):
     # model loading and initialization
     MF_model = UniSRec(config, train_data.dataset).to(device)
 
-    X = pd.read_csv('dataset/downstream/amazon_book/amazon_rating.tsv',header=None,sep='\t').values   
+    X = pd.read_csv('src/dataset/downstream/amazon_book/amazon_rating.tsv',header=None,sep='\t').values   
     users,items = np.unique(X[:,0]),np.unique(X[:,1])
     num_users,num_items = len(users),len(items)
     user_map,item_map = {user:idx for (idx,user) in enumerate(users)},{item:idx for (idx,item) in enumerate(items)}
@@ -124,7 +122,7 @@ def ICL(dataset, pretrained_file, args, fix_enc=True):
         X[i,0] = user_map[X[i,0]]
         X[i,1] = item_map[X[i,1]]
  
-    latest = dataset._load_feat('dataset/downstream/amazon_book/amazon_book.latest.inter',  FeatureSource.INTERACTION)
+    latest = dataset._load_feat('src/dataset/downstream/amazon_book/amazon_book.latest.inter',  FeatureSource.INTERACTION)
     latest_dict = {}
     for column in latest.columns:
         if column=='user_id' or column=='item_id':
@@ -138,7 +136,7 @@ def ICL(dataset, pretrained_file, args, fix_enc=True):
 
     latest_interaction = Interaction(latest_dict).to(device)
 
-    test = dataset._load_feat('dataset/downstream/amazon_book/amazon_book.test.inter',  FeatureSource.INTERACTION)
+    test = dataset._load_feat('src/dataset/downstream/amazon_book/amazon_book.test.inter',  FeatureSource.INTERACTION)
     test_dict = {}
     for column in test.columns:
         if column=='user_id' or column=='item_id':
@@ -150,7 +148,7 @@ def ICL(dataset, pretrained_file, args, fix_enc=True):
             test_dict[column] = rnn_utils.pad_sequence(seq_data, batch_first=True).to(device)
             test_dict['item_length'] = len_data.to(device)
  
-    description = pd.read_csv('dataset/downstream/amazon_book/amazon_description_new.txt',header=None).values.flatten()
+    description = pd.read_csv('src/dataset/downstream/amazon_book/amazon_description_new.txt',header=None).values.flatten()
     text_emb_all = sbert.encode(description,convert_to_tensor=True,batch_size=1024,normalize_embeddings=True).to(device)
     # Load pre-trained model
     if pretrained_file != '':
@@ -174,8 +172,8 @@ def ICL(dataset, pretrained_file, args, fix_enc=True):
     for seed in range(1):
         start_time = time.time()
         fix_random_seed(seed)
-        target_items = pd.read_csv('../result/amazon/target_item_seed'+str(seed)+'.txt',header=None).values.flatten()
-        negatives = pd.read_csv('../result/amazon/ranking_item_seed'+str(seed)+'.txt',header=None).values.flatten()
+        target_items = pd.read_csv('result/amazon/target_item_seed'+str(seed)+'.txt',header=None).values.flatten()
+        negatives = pd.read_csv('result/amazon/ranking_item_seed'+str(seed)+'.txt',header=None).values.flatten()
         negatives = negatives.astype(int)
         target_items = target_items.astype(int)
         negatives_gpu = torch.LongTensor(negatives).to(device)+1
@@ -190,12 +188,12 @@ def ICL(dataset, pretrained_file, args, fix_enc=True):
         orig[4].append(avg_len)
 
         cur_description = copy.deepcopy(original_description)
-        cur_text = pd.read_csv('../result/amazon/new_text_seed'+str(seed)+'_unisrec_opt350m.txt',header=None).values.flatten()
+        cur_text = pd.read_csv('result/amazon/new_text_seed'+str(seed)+'_unisrec_opt350m.txt',header=None).values.flatten()
         
         prompts,target_idx = [],[]
         for i in range(len(cur_text)):
             sampled = np.random.choice([j for j in range(len(cur_text)) if j is not i],size=args.num_example,replace=False)
-            instruction = "[INST] <<SYS>> You are an AI agent that helps a product seller on E-commerce platform. <</SYS>>\n"
+            instruction = "[INST] <<SYS>> You are an AI agent that helps a product seller on E-commerce. <</SYS>>\n"
  
             instruction += "Rewritten Examples:\n"
             for j in range(args.num_example):
@@ -218,8 +216,6 @@ def ICL(dataset, pretrained_file, args, fix_enc=True):
                 for (idx,result) in enumerate(results):
                     generation = result['generation'].replace('\n','')
                     cur_description[target_idx[idx]] = generation
-                    if idx==0:
-                        print(generation[:300])
                 prompts = []
                 target_idx = []
  
@@ -229,7 +225,7 @@ def ICL(dataset, pretrained_file, args, fix_enc=True):
                 cur_description[i] = ' '.join(cur_str[:args.max_words])
 
         avg_rating,avg_HITS,avg_rank,avg_text_sim,avg_len = evaluation(MF_model, target_items,negatives,text_emb_all,cur_description,device,num_users,num_items,sbert,test_dict,negatives_gpu)
-        np.savetxt('../result/amazon/ICL/new_text_seed'+str(seed)+'_unisrec.txt',cur_description[target_items],fmt='%s')
+        np.savetxt('result/amazon/ICL/new_text_seed'+str(seed)+'_unisrec.txt',cur_description[target_items],fmt='%s')
         cur[0].append(avg_rating)
         cur[1].append(avg_HITS)
         cur[2].append(avg_rank)

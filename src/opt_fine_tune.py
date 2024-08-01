@@ -13,7 +13,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
 model.to(device)
 # Load your training datia and format it as a TextDataset
-all_dataset = load_dataset("text",data_files="dataset/downstream/amazon_book/amazon_description_new.txt")
+all_dataset = load_dataset("text",data_files="src/dataset/downstream/amazon_book/amazon_description_new.txt")
 column_names = all_dataset["train"].column_names
 text_column_name = "text" if "text" in column_names else column_names[0]
 
@@ -58,5 +58,5 @@ training_args = TrainingArguments(
 trainer = Trainer(model=model,args=training_args,train_dataset=lm_dataset["train"],data_collator=data_collator,)
 trainer.train()
 # Save the fine-tuned model
-model.save_pretrained("../opt-350m")
-tokenizer.save_pretrained("../opt-350m")
+model.save_pretrained("opt-350m")
+tokenizer.save_pretrained("opt-350m")
